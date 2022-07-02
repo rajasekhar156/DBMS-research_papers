@@ -1,0 +1,45 @@
+1)select reference.paper_id_1, reference.referencepaper_id_2, Research_paper.paper_title, venue.venue_name, authors.author_name, Research_paper.date_of_publication	
+from reference 
+inner join Research_paper on Research_paper.paper_id = reference.referencepaper_id_2
+join venue on venue.venue_id = Research_paper.venue_id 
+join authors on authors.author_id = Research_paper.author_id 
+order by reference.paper_id_1 desc ;
+
+2)select reference.paper_id_1, reference.referencepaper_id_2, Research_paper.paper_title, venue.venue_name, authors.author_name, Research_paper.date_of_publication	
+from reference 
+inner join Research_paper on Research_paper.paper_id = reference.paper_id_1
+join venue on venue.venue_id = Research_paper.venue_id 
+join authors on authors.author_id = Research_paper.author_id 
+order by reference.referencepaper_id_2 desc ;
+
+3)  select A.paper_id_1, C.paper_title, B.referencepaper_id_2 as second_level, D.paper_title as second_level_title 
+    from reference A 
+    join reference B on A.referencepaper_id_2 = B.paper_id_1 
+    join Research_paper C on C.paper_id = A.paper_id_1 
+    join Research_paper D on D.paper_id = B.referencepaper_id_2
+    order by A.paper_id_1 ;
+
+4)  select count(referencepaper_id_2),paper_id_1 from reference group by paper_id_1 order by count(referencepaper_id_2) desc limit 20 ;
+
+5)  SELECT C.author_name, D.author_name, count(*) 
+FROM co_authors A
+JOIN co_authors B ON B.author_id > A.author_id 
+And A.paper_id = B.paper_id
+JOIN authors C ON C.author_id = A.author_id
+JOIN authors D ON D.author_id = B.author_id 
+GROUP BY C.author_name, D.author_name 
+HAVING count(*) > 1;
+
+
+6) select A2.author_name, B2.author_name, C2.author_name, count(*) 
+from reference A 
+join reference B on A.referencepaper_id_2 = B.paper_id_1 
+join reference C on B.referencepaper_id_2 = C.paper_id_1 and C.referencepaper_id_2 = A.paper_id_1
+join Research_paper A1 on A1.paper_id = A.paper_id_1
+join Research_paper B1 on B1.paper_id = B.paper_id_1
+join Research_paper C1 on C1.paper_id = C.paper_id_1
+join authors A2 on A2.author_id = A1.author_id
+join authors B2 on B2.author_id = B1.author_id
+join authors C2 on C2.author_id = C1.author_id
+where A.paper_id_1 < B.paper_id_1 and B.paper_id_1 < C.paper_id_1 
+group by A2.author_name, B2.author_name, C2.author_name ;
